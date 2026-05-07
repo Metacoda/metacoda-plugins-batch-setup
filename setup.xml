@@ -127,6 +127,15 @@
     <condition property="apache.commons-httpclient.downloaded" value="true" else="false">
         <available file="site/downloads/commons-httpclient-3.1.jar"/>
     </condition>
+    <condition property="javax.activation.downloaded" value="true" else="false">
+        <available file="site/downloads/activation-1.1.1.jar"/>
+    </condition>
+    <condition property="javax.mail.mailapi.downloaded" value="true" else="false">
+        <available file="site/downloads/mailapi-1.4.3.jar"/>
+    </condition>
+    <condition property="javax.mail.smtp.downloaded" value="true" else="false">
+        <available file="site/downloads/smtp-1.4.3.jar"/>
+    </condition>
     <condition property="sas.vjrx.downloaded" value="true" else="false">
         <available file="site/downloads/${sas.vjrx.zip}"/>
     </condition>
@@ -176,6 +185,9 @@
         .. metacoda.license.downloaded=${metacoda.license.downloaded}
         .. metacoda.plugins.downloaded=${metacoda.plugins.downloaded}
         .. apache.commons-httpclient.downloaded=${apache.commons-httpclient.downloaded}
+        .. javax.activation.downloaded=${javax.activation.downloaded}
+        .. javax.mail.mailapi.downloaded=${javax.mail.mailapi.downloaded}
+        .. javax.mail.smtp.downloaded=${javax.mail.smtp.downloaded}
         .. sas.vjrx.downloaded=${sas.vjrx.downloaded}
         .. sas.vjrx.unpacked=${sas.vjrx.unpacked}
         .. site.global.properties.exists=${site.global.properties.exists}
@@ -258,6 +270,30 @@
         />
     </target>
 
+    <!-- Downloads the JavaBeans Activation Framework library (no longer in the SAS Management Console picklist as of SAS 9.4 M9). -->
+    <target name="-download-javax-activation" depends="-site-global-properties" unless="${javax.activation.downloaded}">
+        <echo level="info">NOTE: Downloading the JavaBeans Activation Framework library.</echo>
+        <get src="${javax.activation.url}" dest="site/downloads/activation-1.1.1.jar"
+             verbose="true" usetimestamp="true"
+        />
+    </target>
+
+    <!-- Downloads the JavaMail API library (no longer in the SAS Management Console picklist as of SAS 9.4 M9). -->
+    <target name="-download-javax-mail-mailapi" depends="-site-global-properties" unless="${javax.mail.mailapi.downloaded}">
+        <echo level="info">NOTE: Downloading the JavaMail API library.</echo>
+        <get src="${javax.mail.mailapi.url}" dest="site/downloads/mailapi-1.4.3.jar"
+             verbose="true" usetimestamp="true"
+        />
+    </target>
+
+    <!-- Downloads the JavaMail SMTP provider. -->
+    <target name="-download-javax-mail-smtp" depends="-site-global-properties" unless="${javax.mail.smtp.downloaded}">
+        <echo level="info">NOTE: Downloading the JavaMail SMTP provider.</echo>
+        <get src="${javax.mail.smtp.url}" dest="site/downloads/smtp-1.4.3.jar"
+             verbose="true" usetimestamp="true"
+        />
+    </target>
+
     <!-- Downloads the SAS VJRExtract tool from the support.sas.com site. -->
     <target name="-download-vjrx" depends="-site-global-properties" unless="${sas.vjrx.downloaded}">
         <echo level="info">NOTE: Downloading the SAS VJRExtract utility to extract the required SAS jars.</echo>
@@ -277,7 +313,7 @@
     setup, the Metacoda Plug-ins JAR has been downloaded and installed, and the
     SAS VJRExtract utility has been downloaded and unpacked.
     -->
-    <target name="-site-init" depends="-site-info, -download-apache-commons-httpclient, -download-vjrx, -unpack-vjrx"/>
+    <target name="-site-init" depends="-site-info, -download-apache-commons-httpclient, -download-javax-activation, -download-javax-mail-mailapi, -download-javax-mail-smtp, -download-vjrx, -unpack-vjrx"/>
 
     <target name="-create-site-env-properties" unless="${site.env.properties.exists}">
         <copy file="src/site-env.properties" tofile="site/${site.env.properties}"/>
@@ -416,6 +452,9 @@
             </fileset>
         </chmod>
         <copy file="site/downloads/commons-httpclient-3.1.jar" tofile="site/${site.env.dir}/lib/commons-httpclient.jar"/>
+        <copy file="site/downloads/activation-1.1.1.jar" tofile="site/${site.env.dir}/lib/activation.jar"/>
+        <copy file="site/downloads/mailapi-1.4.3.jar" tofile="site/${site.env.dir}/lib/mailapi.jar"/>
+        <copy file="site/downloads/smtp-1.4.3.jar" tofile="site/${site.env.dir}/lib/smtp.jar"/>
         <copy file="site/downloads/${metacoda.plugins.jar}" todir="site/${site.env.dir}/lib"/>
         <copy file="site/downloads/${metacoda.plugins.lic}" todir="site/${site.env.dir}/"/>
     </target>
